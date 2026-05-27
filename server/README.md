@@ -20,5 +20,5 @@ npm run prisma:migrate
 4. Start dev server:
 
 ```bash
-npm run dev
+npm run start
 ```
