@@ -2,23 +2,27 @@ import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getRooms } from '../api/api'
+import type { Room } from '../types/models'
 
 export default function Rooms() {
 	const [query, setQuery] = useState('')
-	const { user } = useAuth()
-	const [rooms, setRooms] = useState<any[]>([])
+	const { user, token } = useAuth()
+	const [rooms, setRooms] = useState<Room[]>([])
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
-
 	useEffect(() => {
+		// wait until auth token is set — server requires auth
+		if (!token) return
+		loadRooms()
+	}, [token])
+
+	function loadRooms() {
 		setLoading(true)
 		getRooms()
-			.then((res: any) => {
-				setRooms(Array.isArray(res) ? res : [])
-			})
-			.catch((e) => setError(e?.message || 'Failed to load rooms'))
+			.then((res) => setRooms(Array.isArray(res) ? (res as Room[]) : []))
+			.catch((e: any) => setError(e?.message || `Request failed with status code ${e?.response?.status || ''}`))
 			.finally(() => setLoading(false))
-	}, [])
+	}
 
 	const filtered = useMemo(() => {
 		const normalized = query.trim().toLowerCase()

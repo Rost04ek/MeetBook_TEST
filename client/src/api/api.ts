@@ -52,4 +52,14 @@ export async function createBooking(payload: unknown): Promise<unknown> {
   return res.data
 }
 
+export async function updateBooking(id: string | number, payload: unknown): Promise<unknown> {
+  const res = await api.put(`/bookings/${id}`, payload)
+  return res.data
+}
+
+export async function deleteBooking(id: string | number): Promise<unknown> {
+  const res = await api.delete(`/bookings/${id}`)
+  return res.data
+}
+
 export default api

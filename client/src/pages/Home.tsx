@@ -1,15 +1,19 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 import { getRooms } from '../api/api'
 
 export default function Home() {
   const [roomsCount, setRoomsCount] = useState<number | null>(null)
 
+  const { token } = useAuth()
+
   useEffect(() => {
+    if (!token) return
     getRooms()
-      .then((res: any) => setRoomsCount(Array.isArray(res) ? res.length : 0))
+      .then((res) => setRoomsCount(Array.isArray(res) ? (res as any[]).length : 0))
       .catch(() => setRoomsCount(0))
-  }, [])
+  }, [token])
 
   return (
     <div className="space-y-8">

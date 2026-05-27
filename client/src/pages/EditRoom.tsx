@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRoom, updateRoom, deleteRoom } from '../api/api'
 import { useAuth } from '../context/AuthContext'
+import type { Room, UserProfile } from '../types/models'
 
 export default function EditRoom() {
   const { id } = useParams()
@@ -14,16 +15,16 @@ export default function EditRoom() {
 
   useEffect(() => {
     if (!id) return
-    getRoom(id).then((r: any) => {
-      // check admin
-      const isAdmin = r.members?.some((m: any) => m.user?.id === user?.id && m.role === 'ADMIN')
+    getRoom(id).then((r) => {
+      const room = r as Room & { members?: Array<{ id: number; role: string; user: UserProfile }> }
+      const isAdmin = room.members?.some((m) => m.user?.id === user?.id && m.role === 'ADMIN')
       if (!isAdmin) {
         alert('You are not allowed to edit this room')
         navigate('/rooms')
         return
       }
-      setName(r.name || '')
-      setDescription(r.description || '')
+      setName(room.name || '')
+      setDescription(room.description || '')
     }).catch((e) => console.error(e))
   }, [id])
 

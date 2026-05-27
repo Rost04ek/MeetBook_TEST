@@ -28,11 +28,12 @@ router.post('/', requireAuth, async (req: AuthRequest, res) => {
   res.status(201).json(booking)
 })
 
-// list bookings, optional filter by roomId
+// list bookings, optional filter by roomId — include room and participants
 router.get('/', requireAuth, async (req: AuthRequest, res) => {
   const roomId = req.query.roomId ? Number(req.query.roomId) : undefined
-  const where = roomId ? { where: { roomId } } : {}
-  const bookings = await (roomId ? prisma.booking.findMany({ where: { roomId } }) : prisma.booking.findMany())
+  const findArgs: any = { include: { room: { include: { members: { include: { user: true } } } }, participants: { include: { user: true } } } }
+  if (roomId) findArgs.where = { roomId }
+  const bookings = await prisma.booking.findMany(findArgs)
   res.json(bookings)
 })
 

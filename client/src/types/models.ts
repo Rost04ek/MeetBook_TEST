@@ -11,13 +11,19 @@ export type Room = {
 }
 
 export type Booking = {
-  id: string
-  roomId: string
-  roomName: string
-  date: string
-  time: string
-  status: 'Confirmed' | 'Pending' | 'Cancelled'
-  notes?: string
+  id: number | string
+  roomId: number | string
+  room?: {
+    id: number | string
+    name: string
+    members?: Array<{ id: number; role: string; user: UserProfile }>
+  }
+  title?: string
+  description?: string
+  start: string
+  end: string
+  createdById?: number | string
+  participants?: Array<{ id: number; user: UserProfile }>
 }
 
 export type BookingDraft = {
